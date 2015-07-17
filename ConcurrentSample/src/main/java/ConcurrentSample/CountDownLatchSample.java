@@ -12,7 +12,7 @@ import java.util.concurrent.CountDownLatch;
 public class CountDownLatchSample {
 	private static final int N = 10;
 	
-	public static void startServer() throws InterruptedException{
+	public static void startServer(){
 		CountDownLatch doneSignal = new CountDownLatch(N);
     	CountDownLatch startSignal = new CountDownLatch(1);//开始执行信号
     	
@@ -21,7 +21,11 @@ public class CountDownLatchSample {
     	}
     	System.out.println("begin---------------");
     	startSignal.countDown();//开始执行了
-    	doneSignal.await();//等待所有的线程执行完毕
+    	try{
+        	doneSignal.await();//等待所有的线程执行完毕
+    	}catch(InterruptedException e){
+    		e.printStackTrace();
+    	}
     	System.out.println("OK");		
 	}
 	
