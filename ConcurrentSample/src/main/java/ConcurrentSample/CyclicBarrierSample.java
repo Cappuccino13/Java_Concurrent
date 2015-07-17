@@ -19,18 +19,26 @@ import java.util.concurrent.CyclicBarrier;
 public class CyclicBarrierSample {
 	
 	public static void StartServer(){
-		final int[] array = new int[3];
+		final int[] array = new int[4];
 		CyclicBarrier barrier = new CyclicBarrier(2, new Runnable(){
 			//在所有线程都到达Barrier时执行
 			public void run(){
-				System.out.println("test CyclicBarrier run...");
-				array[2] = array[0] + array[1];
+				System.out.println("Over Barrier...");
 			}
 		});
 		
 		//启动线程
 		new Thread(new ComponentThread(barrier, array, 0)).start();
 		new Thread(new ComponentThread(barrier, array, 1)).start();
+		
+		try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+		System.out.println("CyclicBarrier 重用");
+		new Thread(new ComponentThread(barrier, array, 2)).start();
+		new Thread(new ComponentThread(barrier, array, 3)).start();
 	}
 	
 	private static class ComponentThread implements Runnable{
@@ -53,9 +61,7 @@ public class CyclicBarrierSample {
 		 			System.out.println("Component" + ID + " sleep...");
 		 			barrier.await();
 		 			System.out.println("Component" + ID + " awaked...");
-		 			//计算数据数组中的当前值和后续值
-		 			int result = array[ID];
-		 			System.out.println("Component" + ID + " result: " + result);			
+		 			System.out.println("Component" + ID + " result: " + array[ID]);			
 		 		}catch(InterruptedException e){
 		 			e.printStackTrace();
 		 		}catch(BrokenBarrierException e){
